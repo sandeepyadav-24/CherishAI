@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { FaGoogle } from "react-icons/fa";
 import { image } from "framer-motion/client";
+import Navbar from "@/components/Navbar";
 
 const features = [
   {
@@ -48,11 +49,7 @@ const features = [
 const LandingPage = () => {
   return (
     <div>
-      <div className="bg-white py-3 px-4 md:px-20">
-        <div className="text-[#C7011A] text-3xl  md:text-4xl font-extrabold font-sans">
-          ChERISH.ai
-        </div>
-      </div>
+      <Navbar />
       <div className="bg-[#E9D8FF] flex flex-col md:flex-row justify-between p-4 md:p-20">
         <div className="mb-4 md:mb-0 w-full md:w-1/2">
           <div className="text-[#C7011A] text-3xl md:text-5xl font-extrabold font-sans">
