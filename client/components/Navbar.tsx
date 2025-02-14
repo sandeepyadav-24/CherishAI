@@ -1,33 +1,117 @@
 "use client";
-import { useState, useEffect } from "react";
-import { FiMenu, FiX, FiUser, FiHeart, FiGlobe } from "react-icons/fi";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { FiMenu, FiX } from "react-icons/fi";
 import Link from "next/link";
 
 const Navbar: React.FC = () => {
+  const { data: session } = useSession(); // Get auth session
+  const isLoggedIn = !!session; // Check if user is logged in
+  const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleNavigation = (href: string) => {
+    if (!isLoggedIn) {
+      router.push("/login"); // Redirect if not logged in
+    } else {
+      router.push(href);
+    }
+  };
+
   return (
-    <div className="bg-white py-3 px-4 md:px-20 flex flex-row justify-between ">
-      <div className="text-[#C7011A]  text-3xl  md:text-4xl font-extrabold font-sans">
-        ChERISH.ai
+    <nav className="bg-white py-3 px-4 md:px-20 shadow-md">
+      <div className="flex justify-between items-center">
+        {/* Logo */}
+        <div className="text-[#C7011A] text-3xl md:text-4xl font-extrabold font-sans">
+          ChERISHai
+        </div>
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex space-x-6">
+          {[
+            { name: "Cards", href: "/cards" },
+            { name: "Poems & Songs", href: "/poems" },
+            { name: "Couple Photos", href: "/photos" },
+            { name: "Video Messages", href: "/videos" },
+            { name: "Scrapbook", href: "/scrapbook" },
+          ].map((item, index) => (
+            <span
+              key={index}
+              onClick={() => handleNavigation(item.href)}
+              className="text-[#B491DE] text-xl font-extrabold cursor-pointer hover:text-[#8A5BBE] transition"
+            >
+              {item.name}
+            </span>
+          ))}
+        </div>
+
+        {/* Login/Logout Button */}
+        <div className="hidden md:flex">
+          {isLoggedIn ? (
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })} // Redirect to home on logout
+              className="bg-[#C7011A] text-white px-4 py-2 rounded-lg font-bold hover:bg-[#8A5BBE] transition"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => signIn(undefined, { callbackUrl: "/dashboard" })} // Redirect to dashboard on login
+              className="bg-[#8A5BBE] text-white px-4 py-2 rounded-lg font-bold hover:bg-[#B491DE] transition"
+            >
+              Login
+            </button>
+          )}
+        </div>
+
+        {/* Mobile Menu Icon */}
+        <button
+          className="md:hidden text-3xl text-[#C7011A]"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <FiX /> : <FiMenu />}
+        </button>
       </div>
-      <div className="flex flex-col md:flex-row md:space-x-6 mt-4 md:mt-0">
-        <span className="text-[#B491DE] mx-3 text-xl font-extrabold ">
-          Cards
-        </span>
-        <span className="text-[#B491DE] mx-3 text-xl font-extrabold">
-          Poems & Songs
-        </span>
-        <span className="text-[#B491DE] mx-3 text-xl font-extrabold">
-          Couple Photos
-        </span>
-        <span className="text-[#B491DE] mx-3 text-xl font-extrabold">
-          Video Messages
-        </span>
-        <span className="text-[#B491DE] mx-3 text-xl font-extrabold">
-          Scrapbook
-        </span>
-      </div>
-    </div>
+
+      {/* Mobile Dropdown Menu */}
+      {menuOpen && (
+        <div className="flex flex-col items-center mt-4 space-y-3 md:hidden">
+          {[
+            { name: "Cards", href: "/cards" },
+            { name: "Poems & Songs", href: "/poems" },
+            { name: "Couple Photos", href: "/photos" },
+            { name: "Video Messages", href: "/videos" },
+            { name: "Scrapbook", href: "/scrapbook" },
+          ].map((item, index) => (
+            <span
+              key={index}
+              onClick={() => handleNavigation(item.href)}
+              className="text-[#B491DE] text-lg font-bold cursor-pointer hover:text-[#8A5BBE] transition"
+            >
+              {item.name}
+            </span>
+          ))}
+
+          {/* Mobile Login/Logout Button */}
+          {isLoggedIn ? (
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })} // Redirect to home on logout
+              className="bg-[#C7011A] text-white px-4 py-2 rounded-lg font-bold hover:bg-[#8A5BBE] transition"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => signIn(undefined, { callbackUrl: "/dashboard" })} // Redirect to dashboard on login
+              className="bg-[#8A5BBE] text-white px-4 py-2 rounded-lg font-bold hover:bg-[#B491DE] transition"
+            >
+              Login
+            </button>
+          )}
+        </div>
+      )}
+    </nav>
   );
 };
 

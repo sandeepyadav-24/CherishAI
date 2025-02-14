@@ -4,6 +4,7 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Textarea } from "@/components/Textarea";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function SongPoemGenerator() {
   const [name, setName] = useState("");
@@ -11,17 +12,75 @@ export default function SongPoemGenerator() {
   const [memories, setMemories] = useState("");
   const [feeling, setFeeling] = useState("");
   const [loading, setLoading] = useState(false);
+  const [lyrics, setLyrics] = useState("");
+  const [song, setSong] = useState("");
   const [output, setOutput] = useState("");
   const [mode, setMode] = useState("poem");
+  const [step, setStep] = useState<"lyrics" | "song">("lyrics");
 
-  const generateContent = async () => {
+  const generateSong = async (lyrics: string) => {
+    console.log("Song Generation Step");
     setLoading(true);
-    setOutput("");
-    // Simulate API call
-    setTimeout(() => {
-      setOutput(`A beautiful ${mode} for ${partnerName} from ${name}`);
+    try {
+      // Simulate API call to generate song
+      const response = await fetch("http://localhost:8787/generate-song", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ lyrics }),
+      });
+
+      const data = await response.json();
+      setSong(data.song);
+    } catch (error) {
+      console.error("Error generating song:", error);
+      alert("Failed to generate song. Please try again.");
+    } finally {
       setLoading(false);
-    }, 3000);
+    }
+  };
+
+  // Automatically generate the song when lyrics update and step is "song"
+  useEffect(() => {
+    if (step === "song" && lyrics) {
+      generateSong(lyrics);
+    }
+  }, [lyrics, step]);
+
+  const generateLyrics = async () => {
+    setLoading(true);
+    console.log("inside Fn");
+    try {
+      // Simulate API call to generate lyrics
+      const response = await fetch("http://localhost:8787/generate-lyrics", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, partnerName, memories, feeling }),
+      });
+
+      const data = await response.json();
+      console.log("Done lyrics geneartion ");
+      setLyrics(data.lyrics);
+      setStep("song"); // Move to the next step
+      // Automatically generate song after lyrics
+      if (step === "song") {
+        await generateSong(lyrics);
+      }
+    } catch (error) {
+      console.error("Error generating lyrics:", error);
+      alert("Failed to generate lyrics. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGenerate = async () => {
+    if (step === "lyrics") {
+      await generateLyrics();
+    }
   };
 
   return (
@@ -79,7 +138,7 @@ export default function SongPoemGenerator() {
             />
             <Button
               className="w-full bg-red-500 hover:bg-red-600"
-              onClick={generateContent}
+              onClick={handleGenerate}
             >
               Generate {mode}
             </Button>
@@ -91,12 +150,24 @@ export default function SongPoemGenerator() {
           {loading ? (
             <Loader2 className="animate-spin h-12 w-12 text-red-500" />
           ) : (
-            <p className="text-lg text-gray-700 text-center">
-              {output || `Your generated ${mode} will appear here.`}
-            </p>
+            <div className="text-lg text-gray-700 text-center">
+              {lyrics && <p>{lyrics}</p>}
+              {song && <p className="mt-4">{song}</p>}
+              {!lyrics && !song && `Your generated ${mode} will appear here.`}
+            </div>
           )}
         </div>
       </div>
     </div>
   );
+}
+
+{
+  /**{loading ? (
+            <Loader2 className="animate-spin h-12 w-12 text-red-500" />
+          ) : (
+            <p className="text-lg text-gray-700 text-center">
+              {output || `Your generated ${mode} will appear here.`}
+            </p>
+          )} */
 }
