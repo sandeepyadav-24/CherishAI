@@ -1,12 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Textarea } from "@/components/Textarea";
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
+import { useSession } from "next-auth/react"; // Import useSession
 
 export default function SongPoemGenerator() {
+  const { data: session } = useSession(); // Get session data
   const [name, setName] = useState("");
   const [partnerName, setPartnerName] = useState("");
   const [memories, setMemories] = useState("");
@@ -14,19 +15,26 @@ export default function SongPoemGenerator() {
   const [loading, setLoading] = useState(false);
   const [lyrics, setLyrics] = useState("");
   const [song, setSong] = useState("");
-  const [output, setOutput] = useState("");
   const [mode, setMode] = useState("poem");
   const [step, setStep] = useState<"lyrics" | "song">("lyrics");
 
+  console.log("Session Data:", session); // Check what session contains
+  console.log("Access Token:", session?.accessToken); // Ensure token exists
+
   const generateSong = async (lyrics: string) => {
+    if (!session) {
+      alert("You must be logged in to generate a song.");
+      return;
+    }
+
     console.log("Song Generation Step");
     setLoading(true);
     try {
-      // Simulate API call to generate song
       const response = await fetch("http://localhost:8787/generate-song", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${session.idToken}`, // Ensure session is available
         },
         body: JSON.stringify({ lyrics }),
       });
@@ -41,7 +49,6 @@ export default function SongPoemGenerator() {
     }
   };
 
-  // Automatically generate the song when lyrics update and step is "song"
   useEffect(() => {
     if (step === "song" && lyrics) {
       generateSong(lyrics);
@@ -49,26 +56,26 @@ export default function SongPoemGenerator() {
   }, [lyrics, step]);
 
   const generateLyrics = async () => {
+    if (!session) {
+      alert("You must be logged in to generate lyrics.");
+      return;
+    }
     setLoading(true);
     console.log("inside Fn");
     try {
-      // Simulate API call to generate lyrics
       const response = await fetch("http://localhost:8787/generate-lyrics", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${session.idToken || ""}`, // Ensure token is a string
         },
         body: JSON.stringify({ name, partnerName, memories, feeling }),
       });
 
       const data = await response.json();
-      console.log("Done lyrics geneartion ");
+      console.log("Done lyrics generation");
       setLyrics(data.lyrics);
-      setStep("song"); // Move to the next step
-      // Automatically generate song after lyrics
-      if (step === "song") {
-        await generateSong(lyrics);
-      }
+      setStep("song");
     } catch (error) {
       console.error("Error generating lyrics:", error);
       alert("Failed to generate lyrics. Please try again.");
@@ -160,14 +167,4 @@ export default function SongPoemGenerator() {
       </div>
     </div>
   );
-}
-
-{
-  /**{loading ? (
-            <Loader2 className="animate-spin h-12 w-12 text-red-500" />
-          ) : (
-            <p className="text-lg text-gray-700 text-center">
-              {output || `Your generated ${mode} will appear here.`}
-            </p>
-          )} */
 }

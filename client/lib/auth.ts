@@ -1,4 +1,3 @@
-// lib/auth.ts
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -10,8 +9,14 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async jwt({ token, user, account }) {
+      if (account) {
+        token.accessToken = account.access_token; // Store access token
+      }
+      return token;
+    },
     async session({ session, token }) {
-      //session.user.id = token.sub;
+      session.accessToken = token.accessToken; // Pass accessToken to session
       return session;
     },
   },

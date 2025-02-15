@@ -29,7 +29,7 @@ const Sidebar = () => {
 
           {/* Logo */}
           <h2 className="text-[#C6021A] text-2xl font-bold mb-6">
-            <Link href={"/dashboard"}>ChERISHai</Link>
+            <Link href={"/dashboard"}>CherishAI</Link>
           </h2>
 
           {/* Sidebar Links */}

@@ -8,6 +8,7 @@
     "@fal-ai/client": "^1.2.3",
     "groq-sdk": "^0.15.0",
     "hono": "^4.7.1",
+    "jose": "^5.9.6",
     "zod": "^3.24.2"
   },
   "devDependencies": {

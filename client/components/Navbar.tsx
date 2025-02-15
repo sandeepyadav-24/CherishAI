@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
       <div className="flex justify-between items-center">
         {/* Logo */}
         <div className="text-[#C7011A] text-3xl md:text-4xl font-extrabold font-sans">
-          ChERISHai
+          CherishAI
         </div>
 
         {/* Desktop Menu */}
