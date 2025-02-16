@@ -19,7 +19,7 @@ export default function SongPoemGenerator() {
   const [step, setStep] = useState<"lyrics" | "song">("lyrics");
 
   console.log("Session Data:", session); // Check what session contains
-  console.log("Access Token:", session?.accessToken); // Ensure token exists
+  //console.log("Access Token:", session?.accessToken); // Ensure token exists
 
   const generateSong = async (lyrics: string) => {
     if (!session) {
@@ -62,6 +62,7 @@ export default function SongPoemGenerator() {
     }
     setLoading(true);
     console.log("inside Fn");
+    console.log("Token " + session.idToken);
     try {
       const response = await fetch("http://localhost:8787/generate-lyrics", {
         method: "POST",

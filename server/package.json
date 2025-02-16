@@ -1,18 +1,27 @@
 {
   "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@fal-ai/client": "^1.2.3",
+    "@prisma/client": "^6.3.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "groq-sdk": "^0.15.0",
-    "hono": "^4.7.1",
-    "jose": "^5.9.6",
-    "zod": "^3.24.2"
+    "jsonwebtoken": "^9.0.2",
+    "typescript": "^5.7.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250109.0",
-    "wrangler": "^3.101.0"
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.8"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
   }
 }

@@ -7,6 +7,7 @@ import Link from "next/link";
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession(); // Get auth session
+  console.log("Session Data:", session); // Debug log
   const isLoggedIn = !!session; // Check if user is logged in
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);

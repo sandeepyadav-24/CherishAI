@@ -1,4 +1,8 @@
+"use client";
+import { useSession } from "next-auth/react";
 export default function DashboardPage() {
+  const { data: session } = useSession(); // Get auth session
+  console.log("Session Data:", session); // Debug log
   return (
     <div className="bg-white p-6 rounded-lg shadow-md text-center my-5">
       <h1 className="text-3xl font-extrabold text-[#C7011A]">
